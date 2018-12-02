@@ -86,11 +86,7 @@
 			{% endif %}
 		</div>
 		<div class="content-header-right">
-			{% if user.active_sort == 'Alphabetical' %}
-			<span class="sort-options modal-trigger" data-toggle="modal" data-target="#activeSortModal">Sort: A-Z</span>
-			{% else %}
-			<span class="sort-options modal-trigger" data-toggle="modal" data-target="#activeSortModal">Sort: By Date</span>
-			{% endif %}
+			<span id="activeSortToggle" class="sort-options modal-trigger" data-toggle="modal" data-target="#activeSortModal">Sort: {{user.active_sort}}</span>
 		</div>
 	</div>
 	<div class="active-entry-container">

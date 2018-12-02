@@ -55,9 +55,23 @@
 		<span class="input-group-label">Username</span>
 		<input type="text" id="userEmail" class="form-control" placeholder="Username" value="{{ user.email }}">
 		<div class="account-btn-container">
-		<button type="button" class="btn btn-primary" data-loading-text="Saving" data-complete-text="Save Changes" disabled>Save Changes</button>
+		<button type="button" id="editUserProfileBtn" class="btn btn-primary" data-loading-text="Saving.." data-complete-text="Save Changes" disabled onclick="edit_logged_user()">Save Changes</button>
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#resetUserPasswordModal">Reset Password</button>
 		<a href="/logout"><button type="button" class="btn btn-danger">Logout</button></a>
 		</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+	$('.form-control').on('keyup', function () {
+	  name = $('#userName').val();
+	  username = $('#userEmail').val();
+
+	  if ((name != '') && (username != '')) {
+	    $('#editUserProfileBtn').attr('disabled',false);
+	  }
+	  else {
+	    $('#editUserProfileBtn').attr('disabled',true);
+	  }
+	});
+</script>

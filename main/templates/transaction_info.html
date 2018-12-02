@@ -27,14 +27,20 @@
                 <td>{{ item.service_name }}</td>
                 <td class="align-right">PHP {{ item.price }}</td>
                 <td class="align-right">{{ item.quantity }}</td>
-                <td class="align-right">{{ item.total }}</td>
+                <td class="align-right">PHP {{ item.total }}</td>
             </tr>
             {% endfor %}
+            <tr>
+                <td>Additional Charges</td>
+                <td class="align-right"></td>
+                <td class="align-right"></td>
+                <td class="align-right">PHP {{ transaction.additional_charge }}</td>
+            </tr>
         </tbody>
     </table>
 </div>
 <span class="input-group-label">Additional Notes</span>
-<textarea id="transactionNotes" class="form-control notes" value="{{ transaction.notes }}"></textarea>
+<textarea id="editTransactionNotes" class="form-control notes">{{ transaction.notes }}</textarea>
 <span class="input-group-label">Logs</span>
 <div class="transaction-logs-container">
     <table id="transactionLogsTable" class="table">

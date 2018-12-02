@@ -37,6 +37,12 @@ $('.active-entry-right').on('click', function () {
   $(this).find('.active-entry-action-container').addClass('visible');
 });
 
+$('.sort-selector').on('click', function () {
+  $('.sort-selector').removeClass('active');
+  $(this).addClass('active');
+  $('#saveSortBtn').attr('disabled', false);
+});
+
 $('#clearActiveSearchBtn').on('click', function () {
   $('#searchActive').val('');
   search_active_transactions('');
@@ -75,12 +81,22 @@ $('.service-quantity-text').on('keyup', function () {
   get_current_total();
 });
 
+$('#additionalCharge').on('keyup', function () {
+  quantity = $(this).val();
+  if (quantity == '') {
+    quantity = 0;
+    $(this).val(quantity);
+    $(this).select();
+  }
+  get_current_total();
+});
+
 $('#addTransactionModal .form-control').on('keyup', function () {
   customer_name = $('#addTransactionName').val();
   customer_msisdn = $('#addTransactionMsisdn').val();
   total = $('#transactionTotal').html();
 
-  if ((customer_name != '') && (customer_msisdn != '') && (customer_msisdn.length == 11) && (total != 'PHP 0.00')) {
+  if ((customer_name != '') && (total != 'PHP 0.00')) {
     $('#saveTransactionBtn').attr('disabled', false);
   }
   else {
@@ -105,7 +121,7 @@ $('#addTransactionModal .form-control').on('change', function () {
   customer_msisdn = $('#addTransactionMsisdn').val();
   total = $('#transactionTotal').html();
 
-  if ((customer_name != '') && (customer_msisdn != '') && (customer_msisdn.length == 11) && (total != 'PHP 0.00')) {
+  if ((customer_name != '') && (total != 'PHP 0.00')) {
     $('#saveTransactionBtn').attr('disabled', false);
   }
   else {
@@ -233,6 +249,19 @@ $('#resetPasswordModal .form-control').on('keyup', function () {
   }
   else {
     $('#resetPasswordBtn').attr('disabled',true);
+  }
+});
+
+$('#resetUserPasswordModal .form-control').on('keyup', function () {
+  temp_pw = $('#resetUserPasswordText').val();
+  temp_pw_confirm = $('#resetUserPasswordConfirmText').val();
+  role = $('#addUserRole').val();
+
+  if ((temp_pw != '') && (temp_pw_confirm != '') && (temp_pw.length >= 8) && (temp_pw_confirm.length >= 8) && (temp_pw_confirm == temp_pw)) {
+    $('#resetUserPasswordBtn').attr('disabled',false);
+  }
+  else {
+    $('#resetUserPasswordBtn').attr('disabled',true);
   }
 });
 

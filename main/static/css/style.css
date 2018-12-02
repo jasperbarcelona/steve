@@ -650,18 +650,20 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 
-#addTransactionModal .form-control:not(#addTransactionEmail),
+#addTransactionModal .form-control:not(#addTransactionEmail):not(#transactionNotes),
 #addServiceModal .form-control,
 #addUserModal .form-control:not(#addUserEmail),
 #userInfoModal .form-control:not(#editUserEmail),
 #serviceInfoModal .form-control,
 #billInfoModal .form-control,
-#transactionInfoModal .form-control:not(#editTransactionEmail) {
+#transactionInfoModal .form-control:not(#editTransactionEmail):not(#editTransactionNotes) {
 	text-transform: capitalize;
 	height: 45px;
 }
 
 #addUserEmail,
+#addTransactionEmail,
+#editTransactionEmail,
 #editUserEmail {
 	height: 45px;
 }
@@ -669,7 +671,7 @@ input[type=number]::-webkit-outer-spin-button {
 #addTransactionNameContainer,
 #addServiceNameContainer,
 #editTransactionNameContainer {
-	margin-top: 10px;
+
 }
 
 .input-label{
@@ -839,7 +841,8 @@ input[type=number]::-webkit-outer-spin-button {
 	font-size: 13px !important;
 }
 
-.service {
+.service,
+.additional-service {
 	height: 60px;
 	width: 100%;
 	background-color: #FFFFFF;
@@ -1584,4 +1587,25 @@ button.btn-floating {
 .permission-picker.active {
 	background-color: #337AB7 !important;
 	color: #FFFFFF !important;
+}
+
+#additionalCharge {
+	padding-left: 50px;
+	text-align: right;
+}
+
+#additionalChargePeso {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 50px;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: column;
+	flex-direction: column;
+	-webkit-align-items: center;
+	align-items: center;
+	-webkit-justify-content: center;
+	justify-content: center;
 }

@@ -6,15 +6,16 @@
             </div>
             <div class="modal-body">
                 {% if user.active_sort == 'Alphabetical' %}
-                <div id="activeSortAlphabetical" class="sort-selector active">Alphabetical</div>
-                <div id="activeSortByDate" class="sort-selector">By Date</div>
+                <div id="activeSortAlphabetical" class="sort-selector active" onclick="change_sort('Alphabetical')">Alphabetical</div>
+                <div id="activeSortByDate" class="sort-selector" onclick="change_sort('Date & Time')">Date & Time</div>
                 {% else %}
-                <div id="activeSortAlphabetical" class="sort-selector">Alphabetical</div>
-                <div id="activeSortByDate" class="sort-selector active">By Date</div>
+                <div id="activeSortAlphabetical" class="sort-selector" onclick="change_sort('Alphabetical')">Alphabetical</div>
+                <div id="activeSortByDate" class="sort-selector active" onclick="change_sort('Date & Time')">Date & Time</div>
                 {% endif %}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger modal-btn" data-dismiss="modal">Close</button>
+                <button type="button" id="saveSortBtn" class="btn btn-primary modal-btn" onclick="save_sort()" data-loading-text="Saving.." data-complete-text="Save" disabled>Save</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -37,11 +38,11 @@
                     <div id="errorTransactionName" class="error-icon-container hidden tooltip" title="This field is required."><i class="material-icons">&#xE001;</i></div>
                 </div>
                 <div class="input-container whole">
-                    <input type="number" id="addTransactionMsisdn" data-error="errorTransactionMsisdn" onblur="validate_blank(this,this.value); validate_msisdn(this,this.value);" class="form-control" data-class="input-label" placeholder="Customer's mobile number" maxlength = "11" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                    <input type="number" id="addTransactionMsisdn" data-error="errorTransactionMsisdn" class="form-control" data-class="input-label" placeholder="Customer's mobile number" maxlength = "11" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
                     <div id="errorTransactionMsisdn" class="error-icon-container hidden tooltip" title="Must be exactly 11 characters."><i class="material-icons">&#xE001;</i></div>
                 </div>
                 <div class="input-container whole">
-                    <input type="email" id="addTransactionEmail" data-error="errorTransactionEmail" onblur="validate_blank(this,this.value)" class="form-control" data-class="input-label" placeholder="Customer's email address">
+                    <input type="email" id="addTransactionEmail" data-error="errorTransactionEmail" class="form-control" data-class="input-label" placeholder="Customer's email address">
                     <div id="errorTransactionEmail" class="error-icon-container hidden tooltip" title="This field is required."><i class="material-icons">&#xE001;</i></div>
                 </div>
                 <span class="input-group-label">Products & Services</span>
@@ -69,6 +70,23 @@
                         </div>
                     </div>
                     {% endfor %}
+                    <div class="additional-service">
+                        <div class="service-left">
+                            <div>
+                                <span class="service-name">Additional Charges</span>
+                            </div>
+                            <div>
+                            </div>
+                        </div>
+                        <div class="service-right">
+                            <div>
+                                <div id="additionalChargePeso">
+                                    <span>PHP</span>
+                                </div>
+                                <input type="number" id="additionalCharge" class="form-control" placeholder="Amount" onclick="this.select()" value="0">
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <span class="input-group-label">Additional Notes</span>
                 <textarea id="transactionNotes" class="form-control notes"></textarea>
@@ -265,12 +283,12 @@
             </div>
             <div class="modal-body">
                 <div class="input-container whole">
-                    <input type="password" id="resetUserPasswordText" onblur="validate_password(this,this.value)" onchange="validate_password(this,this.value)" data-error="errorResetPassword" class="form-control" data-class="input-label" placeholder="New Password">
-                    <div id="errorResetPassword" class="error-icon-container hidden tooltip" title="Must be atleast 8 characters."><i class="material-icons">&#xE001;</i></div>
+                    <input type="password" id="resetUserPasswordText" onblur="validate_password(this,this.value)" onchange="validate_password(this,this.value)" data-error="errorResetUserPassword" class="form-control" data-class="input-label" placeholder="New Password">
+                    <div id="errorResetUserPassword" class="error-icon-container hidden tooltip" title="Must be atleast 8 characters."><i class="material-icons">&#xE001;</i></div>
                 </div>
                 <div class="input-container whole">
-                    <input type="password" id="resetUserPasswordConfirmText" onblur="validate_password_reset(this,this.value)" onchange="validate_password_reset(this,this.value)" data-error="errorResetPasswordConfirm" class="form-control" data-class="input-label" placeholder="Confirm New Password">
-                    <div id="errorResetPasswordConfirm" class="error-icon-container hidden tooltip" title="Passwords don't match."><i class="material-icons">&#xE001;</i></div>
+                    <input type="password" id="resetUserPasswordConfirmText" onblur="validate_password_reset_user(this,this.value)" onchange="validate_password_reset(this,this.value)" data-error="errorResetUserPasswordConfirm" class="form-control" data-class="input-label" placeholder="Confirm New Password">
+                    <div id="errorResetUserPasswordConfirm" class="error-icon-container hidden tooltip" title="Passwords don't match."><i class="material-icons">&#xE001;</i></div>
                 </div>
             </div>
             <div class="modal-footer">

@@ -66,6 +66,8 @@ def nocache(view):
     return update_wrapper(no_cache, view)
 
 def send_email(email_address,customer_name):
+    if email_address == '':
+        return True
     try:
         s = smtplib.SMTP('smtp.gmail.com', 587)
         myGmail = 'washitlaundryservices@gmail.com'
@@ -109,6 +111,30 @@ def index():
         services=services,
         user=user,
         change_pw=session['change_pw']
+        )
+
+
+@app.route('/user/sort/edit',methods=['GET','POST'])
+def edit_user_sort():
+    sort = flask.request.form.get('sort_val')
+    user = AdminUser.query.filter_by(client_no=session['client_no'],id=session['user_id']).first()
+    user.active_sort = sort
+    db.session.commit()
+
+    if user.active_sort == 'Alphabetical':
+        transactions = Transaction.query.filter(Transaction.client_no==session['client_no'], Transaction.status!='Finished').order_by(Transaction.customer_name).all()
+    else:
+        transactions = Transaction.query.filter(Transaction.client_no==session['client_no'], Transaction.status!='Finished').order_by(Transaction.created_at.desc()).all()
+    total_entries = Transaction.query.filter(Transaction.client_no==session['client_no'], Transaction.status!='Finished').count()
+
+    return jsonify(
+        template = flask.render_template(
+            'transactions_result.html',
+            transactions = transactions,
+            user=user
+            ),
+        total_entries = total_entries,
+        sort = user.active_sort
         )
 
 
@@ -202,6 +228,7 @@ def process_transaction():
     transaction.status = 'Processing'
     transaction.process_date = datetime.datetime.now().strftime('%B %d, %Y')
     transaction.process_time = time.strftime("%I:%M%p")
+    db.session.commit()
 
     return jsonify(
         status = 'success',
@@ -266,11 +293,27 @@ def save_transaction():
         customer_email=data['customer_email'],
         total=data['total'],
         notes=data['notes'],
+        additional_charge='{0:.2f}'.format(float(data['additional_charge'])),
         created_at=datetime.datetime.now().strftime('%Y-%m`-%d %H:%M:%S:%f')
         )
 
     db.session.add(transaction)
     db.session.commit()
+
+    if data['customer_msisdn'] or data['customer_msisdn'] != '':
+        customer = Customer.query.filter_by(msisdn=data['customer_msisdn']).first()
+        if not customer or customer == None:
+            customer = Customer(
+                name=data['customer_name'].title(),
+                email=data['customer_email'],
+                msisdn=data['customer_msisdn'],
+                created_at=datetime.datetime.now().strftime('%Y-%m`-%d %H:%M:%S:%f')
+                )
+            db.session.add(customer)
+        customer.name=data['customer_name'].title()
+        customer.email=data['customer_email']
+        customer.msisdn=data['customer_msisdn']
+        db.session.commit()
 
     services = Service.query.filter_by(client_no=session['client_no']).all()
     for service in services:
@@ -586,6 +629,22 @@ def edit_user():
         )
 
 
+@app.route('/user/edit/logged_in',methods=['GET','POST'])
+def edit_logged_user():
+    data = flask.request.form.to_dict()
+    user = AdminUser.query.filter_by(id=session['user_id']).first()
+
+    user.name = data['name'].title()
+    user.email = data['email']
+
+    db.session.commit()
+
+    return jsonify(
+        status = 'success',
+        message = 'Changes saved.'
+        )
+
+
 @app.route('/user/password/reset',methods=['GET','POST'])
 def reset_user_password():
     password = flask.request.form.get('password')
@@ -601,7 +660,6 @@ def reset_logged_in_user_password():
     password = flask.request.form.get('password')
     user = AdminUser.query.filter_by(id=session['user_id']).first()
     user.password = generate_password_hash(password)
-    user.temp_pw = generate_password_hash(password)
     db.session.commit()
     return jsonify(status='success', message=''),201
 
@@ -731,12 +789,12 @@ def logout():
 
 @app.route('/states',methods=['GET','POST'])
 def states():
-    transactions = Transaction.query.all()
-    customers = []
-    for entry in transactions:
-        customers.append(entry.customer_name)
+    customers = Customer.query.all()
+    customer_names = []
+    for entry in customers:
+        customer_names.append(entry.name)
     return jsonify(
-        customers = customers
+        customer_names = customer_names
         )
 
 

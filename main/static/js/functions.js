@@ -1,5 +1,6 @@
 var permissions = [];
 var edit_permissions = [];
+var sort_val = '';
 
 function show_active(slice_from) {
   $('#contentLoader').show();
@@ -180,6 +181,8 @@ function get_current_total() {
     product = price * quantity
     total = parseFloat(total) + product;
   });
+  additional_charges = $('#additionalCharge').val();
+  total = parseFloat(total) + parseFloat(additional_charges);
   $('#transactionTotal').html('PHP ' + total.toFixed(2));
 }
 
@@ -190,7 +193,8 @@ function save_transaction() {
   customer_msisdn = $('#addTransactionMsisdn').val();
   customer_email = $('#addTransactionEmail').val();
   total = $('#transactionTotal').html().substring(4);
-  notes = $('#transactionNotes').html().substring(4);
+  notes = $('#transactionNotes').val();
+  additional_charge = $('#additionalCharge').val();
   $('.service').each(function() {
     item_id = $(this).find('.service-quantity-text').attr('id');
     quantity_text = parseFloat($(this).find('.service-quantity-text').val());
@@ -208,19 +212,21 @@ function save_transaction() {
   items['customer_name'] = customer_name;
   items['customer_msisdn'] = customer_msisdn;
   items['customer_email'] = customer_email;
+  items['additional_charge'] = additional_charge;
   $.post('/transaction/save',
   items
   ,
   function(data){
     $('.content').html(data['template']);
     $('#addTransactionModal').modal('hide');
+    initialize_page();
   });
 }
 
 function initialize_page() {
   $.get('/states',
   function(data){
-    var states = data['customers'];
+    var states = data['customer_names'];
     $('.input-container .typeahead').typeahead({
       hint: true,
       highlight: true,
@@ -516,7 +522,7 @@ function reset_password() {
     $('#resetPasswordBtn').button('complete');
     $('#resetPasswordModal').modal('hide');
     $('#successSnackbar .snackbar-message').html('Password successfully reset.');
-    $('#successSnackbar').addClass('hidden');
+    $('#successSnackbar').removeClass('hidden');
     setTimeout(function() {
       $('#successSnackbar').addClass('hidden');
     }, 4000);
@@ -531,14 +537,14 @@ function reset_user_password() {
     password:password
   },
   function(data){
-    $('#resetPasswordModal .form-control').change();
-    $('#resetPasswordModal .form-control').val('');
-    $('#resetPasswordModal .error-icon-container').addClass('hidden');
-    $('#resetPasswordModal .form-control').css('border','1px solid #ccc');
+    $('#resetUserPasswordModal .form-control').change();
+    $('#resetUserPasswordModal .form-control').val('');
+    $('#resetUserPasswordModal .error-icon-container').addClass('hidden');
+    $('#resetUserPasswordModal .form-control').css('border','1px solid #ccc');
     $('#resetUserPasswordBtn').button('complete');
-    $('#resetPasswordModal').modal('hide');
+    $('#resetUserPasswordModal').modal('hide');
     $('#successSnackbar .snackbar-message').html('Password successfully reset.');
-    $('#successSnackbar').addClass('hidden');
+    $('#successSnackbar').removeClass('hidden');
     setTimeout(function() {
       $('#successSnackbar').addClass('hidden');
     }, 4000);
@@ -562,6 +568,29 @@ function edit_user() {
     $('#userInfoModal').modal('hide');
     $('#successSnackbar').find('.snackbar-message').html(data['message']);;
     $('#successSnackbar').addClass('hidden');
+    setTimeout(function() {
+      $('#successSnackbar').addClass('hidden');
+    }, 4000);
+  });
+}
+
+function edit_logged_user() {
+  $('#editUserProfileBtn').button('loading');
+  name = $('#userName').val();
+  email = $('#userEmail').val();
+
+  $.post('/user/edit/logged_in',
+  {
+    name:name,
+    email:email
+  },
+  function(data){
+    $('#editUserProfileBtn').button('complete');
+    $('#successSnackbar').find('.snackbar-message').html(data['message']);;
+    $('#successSnackbar').removeClass('hidden');
+    setTimeout(function() {
+      $('#editUserProfileBtn').attr('disabled', true);
+    }, 0);
     setTimeout(function() {
       $('#successSnackbar').addClass('hidden');
     }, 4000);
@@ -625,6 +654,22 @@ function validate_password_reset(element,value) {
   error_icon_id = $(element).attr('data-error');
   password = $('#resetPasswordText').val();
   password_confirm = $('#resetPasswordConfirmText').val();
+  if (password == password_confirm) {
+    $(element).css("border", "1px solid #ccc");
+    $('#'+error_icon_id).addClass('hidden');
+    $('#'+error_icon_id).addClass('tooltip');
+  }
+  else {
+    $(element).css("border", "1px solid #d9534f");
+    $('#'+error_icon_id).removeClass('hidden');
+    $('#'+error_icon_id).removeClass('tooltip');
+  }
+}
+
+function validate_password_reset_user(element,value) {
+  error_icon_id = $(element).attr('data-error');
+  password = $('#resetUserPasswordText').val();
+  password_confirm = $('#resetUserPasswordConfirmText').val();
   if (password == password_confirm) {
     $(element).css("border", "1px solid #ccc");
     $('#'+error_icon_id).addClass('hidden');
@@ -853,5 +898,32 @@ function search_history(keyword) {
       }
     }
     
+  });
+}
+
+function change_sort(sort_type) {
+  sort_val = sort_type;
+}
+
+function save_sort() {
+  $('#saveSortBtn').button('loading');
+  $.post('/user/sort/edit',
+  {
+    sort_val:sort_val
+  },
+  function(data){
+    $('.active-entry-container').html(data['template']);
+    $('#saveSortBtn').button('complete');
+    $('#activeSortModal').modal('hide');
+    $('#activeSortToggle').html('Sort: ' + data['sort'])
+    if (data['total_entries'] == 1) {
+      $('#activeCount').html(data['total_entries'] + ' Item')
+    }
+    else {
+      $('#activeCount').html(data['total_entries'] + ' Items')
+    }
+    setTimeout(function() {
+      $('#saveSortBtn').attr('disabled', true);
+    }, 4000);
   });
 }

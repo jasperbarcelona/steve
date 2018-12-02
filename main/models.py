@@ -41,6 +41,14 @@ class Client(db.Model):
     shortcode = db.Column(db.String(30))
     created_at = db.Column(db.String(50))
 
+class Customer(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    client_no = db.Column(db.String(32), unique=True)
+    name = db.Column(db.String(50))
+    msisdn = db.Column(db.String(30),default='')
+    email = db.Column(db.String(100),default='')
+    created_at = db.Column(db.String(50))
+
 class AdminUser(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     client_no = db.Column(db.String(32))
@@ -66,8 +74,8 @@ class Transaction(db.Model):
     cashier_id = db.Column(db.Integer())
     cashier_name = db.Column(db.String(60))
     customer_name = db.Column(db.String(60), nullable=True)
-    customer_email = db.Column(db.String(60), nullable=True)
-    customer_msisdn = db.Column(db.String(30), nullable=True)
+    customer_email = db.Column(db.String(60), nullable=True, default='')
+    customer_msisdn = db.Column(db.String(30), nullable=True, default='')
     process_date = db.Column(db.String(30), default='')
     process_time = db.Column(db.String(10), default='')
     done_date = db.Column(db.String(30), default='')
@@ -75,6 +83,7 @@ class Transaction(db.Model):
     pickup_date = db.Column(db.String(30), default='')
     pickup_time = db.Column(db.String(10), default='')
     total = db.Column(db.String(30))
+    additional_charge = db.Column(db.String(30))
     notes = db.Column(db.Text())
     created_at = db.Column(db.String(50))
 
