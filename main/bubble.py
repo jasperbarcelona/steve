@@ -935,8 +935,8 @@ def rebuild_database():
 
     db.session.add(client)
     db.session.add(user)
-    db.session.add(transaction)
-    db.session.add(transaction1)
+    # db.session.add(transaction)
+    # db.session.add(transaction1)
     # db.session.add(transaction2)
     # db.session.add(transaction3)
     db.session.add(service)
