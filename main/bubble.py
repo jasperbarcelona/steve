@@ -884,7 +884,7 @@ def rebuild_database():
 
     transaction = Transaction(
         client_no='bubble',
-        date='December 2, 2018',
+        date='December 02, 2018',
         time=time.strftime("%I:%M%p"),
         month_year=datetime.datetime.now().strftime('%B %Y'),
         status='Finished',
@@ -900,7 +900,7 @@ def rebuild_database():
 
     transaction1 = Transaction(
         client_no='bubble',
-        date='December 2, 2018',
+        date='December 02, 2018',
         time=time.strftime("%I:%M%p"),
         month_year=datetime.datetime.now().strftime('%B %Y'),
         status='Finished',
