@@ -884,10 +884,10 @@ def rebuild_database():
 
     transaction = Transaction(
         client_no='bubble',
-        date=datetime.datetime.now().strftime('%B %d, %Y'),
+        date='December 2, 2018',
         time=time.strftime("%I:%M%p"),
         month_year=datetime.datetime.now().strftime('%B %Y'),
-        status='Pending',
+        status='Finished',
         cashier_id=1,
         cashier_name='Sample Cashier',
         customer_name='Steven Buenafe',
@@ -900,10 +900,10 @@ def rebuild_database():
 
     transaction1 = Transaction(
         client_no='bubble',
-        date=datetime.datetime.now().strftime('%B %d, %Y'),
+        date='December 2, 2018',
         time=time.strftime("%I:%M%p"),
         month_year=datetime.datetime.now().strftime('%B %Y'),
-        status='Processing',
+        status='Finished',
         cashier_id=1,
         cashier_name='Sample Cashier',
         customer_name='Sample Customer',
@@ -954,8 +954,8 @@ def rebuild_database():
 
     db.session.add(client)
     db.session.add(user)
-    # db.session.add(transaction)
-    # db.session.add(transaction1)
+    db.session.add(transaction)
+    db.session.add(transaction1)
     # db.session.add(transaction2)
     # db.session.add(transaction3)
     db.session.add(service)
