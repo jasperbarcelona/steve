@@ -22,7 +22,8 @@ function show_history(slice_from) {
   $.get('/history',
   function(data){
     $('.content').html(data['template']);
-    $('#searchHistoryDate').val(data['date']);
+    $('#searchHistoryDateFrom').val(data['date']);
+    $('#searchHistoryDateTo').val(data['date']);
     $('#contentLoader').fadeOut();
   });
 }
@@ -870,32 +871,43 @@ function search_active_transactions(keyword) {
 }
 
 function search_history(keyword) {
-  date = $('#searchHistoryDate').val();
+  from_date = $('#searchHistoryDateFrom').val();
+  to_date = $('#searchHistoryDateTo').val();
   $.post('/history/search',
   {
-    keyword:keyword,
-    date:date
+    from_date:from_date,
+    to_date:to_date,
+    keyword:keyword
   },
   function(data){
-    $('.history-entry-container').html(data['template']);
-    $('#historyTotal').html('Total: PHP '+data['total']);
-    if (keyword != '') {
-      $('#clearHistorySearchBtn').removeClass('hidden');
-      if (data['total_entries'] == 1) {
-        $('#historyCount').html(data['total_entries'] + ' Result')
+    if (data['status'] == 'success') {
+      $('.history-entry-container').html(data['template']);
+      $('#historyTotal').html('Total: PHP '+data['total']);
+      if (keyword != '') {
+        $('#clearHistorySearchBtn').removeClass('hidden');
+        if (data['total_entries'] == 1) {
+          $('#historyCount').html(data['total_entries'] + ' Result')
+        }
+        else {
+          $('#historyCount').html(data['total_entries'] + ' Results')
+        }
       }
       else {
-        $('#historyCount').html(data['total_entries'] + ' Results')
+        $('#clearHistorySearchBtn').addClass('hidden');
+        if (data['total_entries'] == 1) {
+          $('#historyCount').html(data['total_entries'] + ' Item')
+        }
+        else {
+          $('#historyCount').html(data['total_entries'] + ' Items')
+        }
       }
     }
     else {
-      $('#clearHistorySearchBtn').addClass('hidden');
-      if (data['total_entries'] == 1) {
-        $('#historyCount').html(data['total_entries'] + ' Item')
-      }
-      else {
-        $('#historyCount').html(data['total_entries'] + ' Items')
-      }
+      $('#ErrorSnackbar .snackbar-message').html(data['message']);
+      $('#ErrorSnackbar').removeClass('hidden');
+      setTimeout(function() {
+        $('#ErrorSnackbar').addClass('hidden');
+      }, 4000);
     }
     
   });

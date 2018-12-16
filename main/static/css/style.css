@@ -154,13 +154,40 @@ input[type=number]::-webkit-outer-spin-button {
 	width: 100%;
 }
 
-.search-container {
+.search-container:not(.half) {
 	position: relative;
 	background-color: #FFFFFF;
 	width: 100% !important;
 	height: 50px !important;
 	padding-right: 100px;
 	border-bottom: 1px solid #D9D9D9;
+}
+
+.search-container.half {
+	position: relative;
+	float: left;
+	background-color: #FFFFFF;
+	width: 50% !important;
+	height: 50px !important;
+	padding-left: 50px;
+	border-bottom: 1px solid #D9D9D9;
+}
+
+.date-label {
+	position: absolute;
+	left: 0;
+	top: 0;
+	padding-left: 13px;
+	height: 100%;
+	width: 50px;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: row;
+	flex-direction: row;
+	-webkit-align-items: center;
+	align-items: center;
+	-webkit-justify-content: left;
+	justify-content: left;
 }
 
 .clear-search {

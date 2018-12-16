@@ -10,8 +10,17 @@
 		</div>
 	</div>
 </div>
-<div class="search-container">
-	<input type="text" id="searchHistoryDate" class="search-text-box form-control datepicker" placeholder="Date" value="{{ date }}">
+<div class="search-container half">
+	<div class="date-label">
+		<span>From:</span>
+	</div>
+	<input type="text" id="searchHistoryDateFrom" class="search-text-box form-control datepicker history-date-picker" placeholder="Date" value="{{ date }}">
+</div>
+<div class="search-container half">
+	<div class="date-label">
+		<span>To:</span>
+	</div>
+	<input type="text" id="searchHistoryDateTo" class="search-text-box form-control datepicker history-date-picker" placeholder="Date" value="{{ date }}">
 </div>
 <div class="content-header">
 	<div class="content-header-left">
@@ -86,7 +95,7 @@ $('#clearHistorySearchBtn').on('click', function () {
   search_history('');
 });
 
-$('#searchHistoryDate').on('change', function () {
+$('.history-date-picker').on('change', function () {
 	search_history($('#searchHistory').val());
 });
 

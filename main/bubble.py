@@ -165,14 +165,33 @@ def search_active_transactions():
 def search_history():
     data = flask.request.form.to_dict()
     user = AdminUser.query.filter_by(client_no=session['client_no'],id=session['user_id']).first()
-    if data['keyword'] != '':
-        transactions = Transaction.query.filter(Transaction.customer_name.ilike('%'+data['keyword']+'%'), Transaction.status=='Finished', Transaction.date==data['date']).order_by(Transaction.customer_name).all()
+
+    if 'from_date' in data and 'to_date' in data:
+        if parse_date(data['from_date']) > parse_date(data['to_date']):
+            return jsonify(
+                status='failed',
+                message='"TO DATE should not be earlier than FROM DATE."'
+                )
+
+    if 'keyword' in data and data['keyword'] != '':
+        if data['to_date'] == None or data['to_date'] == '' or data['to_date'] == data['from_date']:
+            transactions = Transaction.query.filter(Transaction.customer_name.ilike('%'+data['keyword']+'%'), Transaction.status=='Finished', Transaction.date==data['from_date']).order_by(Transaction.created_at.desc()).all()
+            total_entries = Transaction.query.filter(Transaction.customer_name.ilike('%'+data['keyword']+'%'), Transaction.status=='Finished', Transaction.date==data['from_date']).count()
+        else:
+            transactions = Transaction.query.filter(Transaction.customer_name.ilike('%'+data['keyword']+'%'), Transaction.status=='Finished').filter(Transaction.date >= data['from_date']).filter(Transaction.date <= data['to_date']).order_by(Transaction.created_at.desc()).all()
+            total_entries = Transaction.query.filter(Transaction.customer_name.ilike('%'+data['keyword']+'%'), Transaction.status=='Finished').filter(Transaction.date >= data['from_date']).filter(Transaction.date <= data['to_date']).count()
     else:
-        transactions = Transaction.query.filter(Transaction.client_no==session['client_no'], Transaction.status=='Finished', Transaction.date==data['date']).order_by(Transaction.created_at.desc()).all()
-    total_entries = Transaction.query.filter(Transaction.customer_name.ilike('%'+data['keyword']+'%'), Transaction.status=='Finished', Transaction.date==data['date']).order_by(Transaction.customer_name).count()
+        if data['to_date'] == None or data['to_date'] == '' or data['to_date'] == data['from_date']:
+            transactions = Transaction.query.filter(Transaction.client_no==session['client_no'], Transaction.status=='Finished', Transaction.date==data['from_date']).order_by(Transaction.created_at.desc()).all()
+            total_entries = Transaction.query.filter(Transaction.client_no==session['client_no'], Transaction.status=='Finished', Transaction.date==data['from_date']).count()
+        else:
+            transactions = Transaction.query.filter(Transaction.status=='Finished').filter(Transaction.date >= data['from_date']).filter(Transaction.date <= data['to_date']).order_by(Transaction.created_at.desc())
+            total_entries = Transaction.query.filter(Transaction.status=='Finished').filter(Transaction.date >= data['from_date']).filter(Transaction.date <= data['to_date']).count()
+    
     total = '{0:.2f}'.format(sum(float(transaction.total) for transaction in transactions))
 
     return jsonify(
+        status='success',
         template = flask.render_template(
             'history_result.html',
             transactions = transactions
@@ -841,7 +860,7 @@ def rebuild_database():
 
     client = Client(
         client_no='bubble',
-        name='Wash It',
+        name='E-Laba',
         app_id='EGXMuB5eEgCMLTKxExieqkCGeGeGuBon',
         app_secret='f3e1ab30e23ea7a58105f058318785ae236378d1d9ebac58fe8b42e1e239e1c3',
         passphrase='24BUubukMQ',
